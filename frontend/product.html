@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title id="pageTitle">Товар — MuratTeхніка</title>
+<meta name="description" id="metaDescription" content="Навушники AirPods (копія 1:1) — MuratTeхніка. Оплата онлайн, доставка Укрпоштою та Новою поштою по всій Україні.">
+<meta name="robots" content="index, follow">
+<link rel="canonical" id="canonicalLink" href="https://murattehnika.com.ua/product.html">
+<meta property="og:type" content="product">
+<meta property="og:site_name" content="MuratTeхніка">
+<meta property="og:title" id="ogTitle" content="MuratTeхніка">
+<meta property="og:description" id="ogDescription" content="">
+<link rel="icon" href="data:,">
+<link rel="stylesheet" href="css/style.css">
+<script type="application/ld+json" id="productSchema"></script>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="header-inner">
+    <a href="/" class="brand">
+      <span class="brand-emoji">💻</span>
+      <div>
+        <div class="brand-name">MuratTeхніка</div>
+        <div class="brand-tagline">Техніка Apple · копії преміум-якості</div>
+      </div>
+    </a>
+    <div class="header-actions">
+      <a href="tel:+380961069753" class="phone-pill">
+        <span>📞</span><span class="txt">096 106 97 53</span>
+      </a>
+      <button class="cart-btn" id="openCartBtn">
+        🛒 Кошик <span class="cart-count">0</span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<main class="container">
+  <div class="breadcrumbs">
+    <a href="/">Каталог</a> <span id="crumbCat"></span> / <span id="crumbName"></span>
+  </div>
+
+  <div id="productContent">
+    <div class="empty-state">Завантаження товару...</div>
+  </div>
+</main>
+
+<!-- Кошик (drawer) -->
+<div class="overlay" id="overlay"></div>
+<aside class="drawer" id="cartDrawer">
+  <div class="drawer-header">
+    <h3>Кошик</h3>
+    <button class="close-btn" id="closeCartBtn">✕</button>
+  </div>
+  <div class="drawer-body" id="cartItems"></div>
+  <div class="drawer-footer">
+    <div class="total-row"><span>Разом</span><span id="cartTotal">0 ₴</span></div>
+    <button class="checkout-btn" id="checkoutBtn" onclick="location.href='/#catalog'">Перейти до оформлення</button>
+  </div>
+</aside>
+
+<!-- Модалка відгуку -->
+<div class="modal-overlay" id="reviewModalOverlay">
+  <div class="modal">
+    <h3>Залишити відгук</h3>
+    <p class="sub">Поділіться враженням про товар</p>
+    <form id="reviewForm">
+      <div class="field">
+        <label>Ваша оцінка</label>
+        <div class="star-picker" id="starPicker">
+          <span data-v="1">★</span><span data-v="2">★</span><span data-v="3">★</span>
+          <span data-v="4">★</span><span data-v="5">★</span>
+        </div>
+      </div>
+      <div class="field">
+        <label for="rv_name">Ваше ім'я</label>
+        <input type="text" id="rv_name" required placeholder="Як до вас звертатись">
+      </div>
+      <div class="field">
+        <label for="rv_text">Відгук</label>
+        <textarea id="rv_text" rows="3" placeholder="Розкажіть про свій досвід покупки"></textarea>
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="btn-secondary" id="cancelReviewBtn">Скасувати</button>
+        <button type="submit" class="btn-primary">Опублікувати</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<footer class="site-footer">
+  <div class="footer-inner">
+    <div class="footer-col"><h4>MuratTeхніка</h4><p>Техніка Apple (копії)</p></div>
+    <div class="footer-col"><h4>Контакти</h4><a href="tel:+380961069753">096 106 97 53</a></div>
+    <div class="footer-col"><h4>Доставка та оплата</h4><p>Укрпошта, Нова пошта</p></div>
+  </div>
+  <div class="footer-bottom">© 2026 MuratTeхніка. Усі права захищено.</div>
+</footer>
+
+<script src="js/cart.js"></script>
+<script src="js/api.js"></script>
+<script src="js/product.js"></script>
+</body>
+</html>

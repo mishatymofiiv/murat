@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Адмін-панель — MuratTeхніка</title>
+<link rel="icon" href="data:,">
+<link rel="stylesheet" href="../css/style.css">
+<style>
+  body { background: var(--bg); }
+  .admin-wrap { max-width: 960px; margin: 0 auto; padding: 30px 24px 80px; }
+  .admin-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:24px; }
+  .admin-table { width:100%; border-collapse: collapse; background:var(--card); border:1px solid var(--border); border-radius:var(--radius-md); overflow:hidden; }
+  .admin-table th, .admin-table td { text-align:left; padding:12px 14px; border-bottom:1px solid var(--border); font-size:14px; }
+  .admin-table th { color:var(--text-secondary); font-size:12px; text-transform:uppercase; }
+  .admin-table tr:last-child td { border-bottom:none; }
+  .admin-table img { width:40px; height:40px; object-fit:cover; border-radius:8px; }
+  .row-actions button { margin-right:6px; font-size:12px; padding:6px 10px; border-radius:8px; border:1px solid var(--border); background:var(--card); }
+  .row-actions button:hover { border-color: var(--accent); color: var(--accent); }
+  .login-box { max-width:360px; margin:80px auto; background:var(--card); border:1px solid var(--border); border-radius:var(--radius-lg); padding:28px; }
+  .form-grid { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+  .form-grid .full { grid-column: 1 / -1; }
+</style>
+</head>
+<body>
+
+<div id="loginScreen" class="login-box">
+  <h3 style="margin-bottom:6px;">Вхід в адмін-панель</h3>
+  <p class="sub" style="color:var(--text-secondary); font-size:13px; margin-bottom:18px;">Введіть admin-токен із файлу .env бекенду</p>
+  <div class="field"><input type="password" id="tokenInput" placeholder="ADMIN_TOKEN"></div>
+  <button class="btn-primary" style="width:100%;" id="loginBtn">Увійти</button>
+</div>
+
+<div id="adminScreen" class="admin-wrap" style="display:none;">
+  <div class="admin-header">
+    <h2 id="adminTitle">Керування товарами</h2>
+    <div>
+      <button class="btn-secondary" id="logoutBtn">Вийти</button>
+      <button class="btn-primary" id="newProductBtn">+ Новий товар</button>
+    </div>
+  </div>
+
+  <div class="admin-tabs">
+    <button class="admin-tab active" data-tab="products">Товари</button>
+    <button class="admin-tab" data-tab="orders">Замовлення</button>
+  </div>
+
+  <div id="productsTab">
+    <table class="admin-table">
+      <thead>
+        <tr><th>Фото</th><th>Назва</th><th>Категорія</th><th>Ціна</th><th>Наявність</th><th>Дії</th></tr>
+      </thead>
+      <tbody id="productsTableBody"></tbody>
+    </table>
+  </div>
+
+  <div id="ordersTab" style="display:none;">
+    <table class="admin-table">
+      <thead>
+        <tr><th></th><th>№</th><th>Клієнт</th><th>Телефон</th><th>Доставка</th><th>Оплата</th><th>Сума</th><th>Статус</th><th>Дії</th></tr>
+      </thead>
+      <tbody id="ordersTableBody"></tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Модалка редагування товару -->
+<div class="modal-overlay" id="productModalOverlay">
+  <div class="modal" style="max-width:600px;">
+    <h3 id="productModalTitle">Новий товар</h3>
+    <form id="productForm">
+      <input type="hidden" id="p_id">
+      <div class="form-grid">
+        <div class="field full">
+          <label>Назва товару</label>
+          <input type="text" id="p_name" required>
+        </div>
+        <div class="field">
+          <label>Категорія</label>
+          <select id="p_category_id"></select>
+        </div>
+        <div class="field">
+          <label>Наявність</label>
+          <select id="p_in_stock">
+            <option value="true">Є в наявності</option>
+            <option value="false">Немає в наявності</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Ціна, ₴</label>
+          <input type="number" id="p_price" required min="0" step="1">
+        </div>
+        <div class="field">
+          <label>Стара ціна (для знижки), ₴</label>
+          <input type="number" id="p_old_price" min="0" step="1">
+        </div>
+        <div class="field full">
+          <label>Головне фото товару</label>
+          <label class="upload-box" id="uploadBox" for="p_image_file">
+            <input type="file" id="p_image_file" accept="image/jpeg,image/png,image/webp">
+            <div class="up-icon">📷</div>
+            <div class="up-text">Натисніть або перетягніть фото сюди</div>
+            <div class="up-hint">Рекомендовано: JPG / WebP, квадрат 1200×1200px, до 500 КБ</div>
+            <div id="uploadPreviewWrap"></div>
+            <div class="upload-progress" id="uploadProgress"></div>
+          </label>
+        </div>
+        <div class="field full">
+          <label>Або вкажіть URL фото вручну</label>
+          <input type="text" id="p_image_url" placeholder="https://... або заповнюється автоматично після завантаження">
+        </div>
+        <div class="field full" id="galleryWrap" style="display:none;">
+          <label>Додаткові фото товару (галерея)</label>
+          <div id="galleryList" style="display:flex; gap:10px; flex-wrap:wrap; margin-bottom:10px;"></div>
+          <label style="cursor:pointer;">
+            <div class="upload-box" id="galleryUploadBox" style="padding:14px;">
+              <input type="file" id="p_gallery_file" accept="image/jpeg,image/png,image/webp">
+              <div class="up-text" style="font-size:12px;">+ Додати ще одне фото в галерею</div>
+            </div>
+          </label>
+        </div>
+        <p style="font-size:12px; color:var(--text-secondary); margin:-6px 0 4px;" id="newProductHint">Галерея додаткових фото стане доступна після першого збереження товару.</p>
+        <div class="field full">
+          <label>Короткий опис (для картки товару)</label>
+          <input type="text" id="p_short_description" maxlength="200">
+        </div>
+        <div class="field full">
+          <label>Повний опис</label>
+          <textarea id="p_description" rows="4"></textarea>
+        </div>
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="btn-secondary" id="cancelProductBtn">Скасувати</button>
+        <button type="submit" class="btn-primary">Зберегти</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="../js/api.js"></script>
+<script src="admin.js"></script>
+</body>
+</html>
